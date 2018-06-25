@@ -1,0 +1,109 @@
+//   1. Для заданного графа выполнить поиск
+// кратчайших путей для каждой вершины графа.
+
+// Подготовил: Тамкович Дениска, гр. 62492
+
+program Project2;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils;
+
+Type
+  matr = array[1..5, 1..5] of integer;
+  row = array[1..10] of integer;
+
+var
+  n:integer;
+  
+{алгоритм Флойда-Уоршелла}
+Procedure FU(Var D,S: matr);
+var
+  k,i,j: integer;
+begin
+  for i:=1 to n do
+  begin
+    D[i, i]:=0;
+    S[i,i]:=0;
+  end;
+ 
+  for k:=1 to n do
+    for i:=1 to n do
+      for j:=1 to n do
+        if (D[i, k]<>0) and (D[k, j]<>0) and (i<>j) then
+          if (D[i, k]+D[k, j]<D[i, j]) or (D[i, j]=0) then
+          begin
+            D[i, j]:=D[i, k]+D[k, j];
+            S[i,j]:=k;
+          end;
+end;
+
+// ввод матрицы
+procedure Vivod(filename:string; Var a:matr);
+var
+  i,j:integer;
+  f:textfile;
+begin
+  assignfile(f,filename); reset(f);
+  readln(f,n);
+  for i:=1 to n do
+    for j:=1 to n do
+      read(f, a[i,j]);
+  closefile(f);
+end;
+
+// вывод матрицы
+procedure Vivod(a:matr);
+var
+  i,j:integer;
+begin
+  for i:=1 to n do
+  begin
+    for j:=1 to n do
+      write(a[i,j]:4);
+    writeln;
+  end;
+end;
+
+// поиск кратчаеших путей из каждой вергины в каждую
+procedure poisk(mas:matr; a,b:integer);
+Var
+  i,j,v:integer;
+begin
+  v:=a;
+  write('[',a,']');
+  while True do
+  begin
+    if mas[v,b]=b then
+      break
+    else
+    begin
+      write('->[',mas[v,b],']');
+      v:=mas[v,b];
+    end;
+  end;
+  write('->[',b,']');
+end;
+
+Var
+  GR: matr;
+  HR: matr;
+  i,j,a,b:integer;
+begin
+ vvod('input.txt', GR);
+ for i:=1 to 5 do
+  for j:=1 to 5 do
+    HR[i,j]:=j;
+ FU(GR,HR);
+ vivod(GR);
+ writeln;
+ vivod(HR);
+ writeln('Vvedite 2 versini');
+ readln(a,b);
+ writeln('Pokazan kratchaishiy put iz vershini ',a,' v ',b);
+ poisk(HR,a,b);
+ 
+ readln;
+end.
+ 
